@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           waniTEST
-version:        1.0.0.0
+version:        1.0.0.1
 description:    Please see the README on GitHub at <https://github.com/hinarid/waniTest>
 author:         Hinari Daido
 maintainer:     Hinari Daido

@@ -4,10 +4,12 @@ module Problems.NLPProblems (
   notYes
 )
  where
-import qualified DTS.DTT as DT
+import qualified DTS.UDTTdeBruijn as U
 import qualified Data.Text.Lazy as T
 import qualified Data.Text.Lazy.IO as T
 import ProblemBase as PB
+import qualified DTS.QueryTypes as QT (ProofSearchQuery(..))
+import DTS.Labels (DTT)
 
 yes :: [PB.TestType]
 yes = [
@@ -19,74 +21,74 @@ yes = [
 notYes :: [PB.TestType]
 notYes = []
 
-thereIsA :: T.Text -> DT.Preterm
-thereIsA txt = DT.Sigma (DT.Con "entity") (DT.App (DT.Con txt) (DT.Var 0))
+thereIsA :: T.Text -> U.Preterm DTT
+thereIsA txt = U.Sigma (U.Con "entity") (U.App (U.Con txt) (U.Var 0))
 
-thereIsAGirl :: DT.Preterm
+thereIsAGirl :: U.Preterm DTT
 thereIsAGirl = thereIsA "girl"
 
-aGirlWritesAThesis :: DT.Preterm
+aGirlWritesAThesis :: U.Preterm DTT
 aGirlWritesAThesis = 
-    DT.Sigma 
+    U.Sigma 
         (thereIsAGirl)
-        (DT.Sigma 
-            (DT.Sigma (DT.Con "entity") (DT.App (DT.Con "thesis") (DT.Var 0))) 
-            (DT.App (DT.App (DT.Con "write") (DT.Proj DT.Fst $DT.Var 1)) (DT.Proj DT.Fst $ DT.Var 0))
+        (U.Sigma 
+            (U.Sigma (U.Con "entity") (U.App (U.Con "thesis") (U.Var 0))) 
+            (U.App (U.App (U.Con "write") (U.Proj U.Fst $U.Var 1)) (U.Proj U.Fst $ U.Var 0))
         )
 
 aGirlWritesAThesis_IsThereAGirl :: TestType
-aGirlWritesAThesis_IsThereAGirl  b =
+aGirlWritesAThesis_IsThereAGirl =
   let
-    sigEnv = [("write",DT.Pi (DT.Con "entity") (DT.Pi (DT.Con "entity") (DT.Type))),("thesis",DT.Pi (DT.Con "entity") (DT.Type)),("girl",DT.Pi (DT.Con "entity") (DT.Type)),("entity",DT.Type)]
+    sigEnv = [("write",U.Pi (U.Con "entity") (U.Pi (U.Con "entity") (U.Type))),("thesis",U.Pi (U.Con "entity") (U.Type)),("girl",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [aGirlWritesAThesis]
     pre_type = thereIsAGirl
-  in (True,executeWithDNEDepth varEnv sigEnv pre_type b 3)
+  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
-aGirlWritesAThesis' :: DT.Preterm
+aGirlWritesAThesis' :: U.Preterm DTT
 aGirlWritesAThesis' = 
-    DT.Sigma 
-        (DT.Sigma 
+    U.Sigma 
+        (U.Sigma 
             thereIsAGirl
-            (DT.Sigma (DT.Con "entity") (DT.App (DT.Con "thesis") (DT.Var 0)))
+            (U.Sigma (U.Con "entity") (U.App (U.Con "thesis") (U.Var 0)))
         )
-        (DT.App (DT.App (DT.Con "write") (DT.Proj DT.Fst $DT.Proj DT.Fst $DT.Var 0)) (DT.Proj DT.Fst $DT.Proj DT.Snd $DT.Var 0))
+        (U.App (U.App (U.Con "write") (U.Proj U.Fst $U.Proj U.Fst $U.Var 0)) (U.Proj U.Fst $U.Proj U.Snd $U.Var 0))
 
 aGirlWritesAThesis_IsThereAGirl' :: TestType
-aGirlWritesAThesis_IsThereAGirl'  b =
+aGirlWritesAThesis_IsThereAGirl'  =
   let
-    sigEnv = [("write",DT.Pi (DT.Con "entity") (DT.Pi (DT.Con "entity") (DT.Type))),("thesis",DT.Pi (DT.Con "entity") (DT.Type)),("girl",DT.Pi (DT.Con "entity") (DT.Type)),("entity",DT.Type)]
+    sigEnv = [("write",U.Pi (U.Con "entity") (U.Pi (U.Con "entity") (U.Type))),("thesis",U.Pi (U.Con "entity") (U.Type)),("girl",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [aGirlWritesAThesis']
     pre_type = thereIsAGirl
-  in (True,executeWithDNEDepth varEnv sigEnv pre_type b 3)
+  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
-aManEntersHeWhistle :: DT.Preterm
+aManEntersHeWhistle :: U.Preterm DTT
 aManEntersHeWhistle = 
-    DT.Sigma 
-        (DT.Sigma (DT.Con "entity") (DT.App (DT.Con "man") (DT.Var 0)))
-        (DT.Sigma
-            (DT.App (DT.Con "enter") (DT.Proj DT.Fst $DT.Var 0))
-            (DT.App (DT.Con "whistle") (DT.Proj DT.Fst $DT.Var 1))
+    U.Sigma 
+        (U.Sigma (U.Con "entity") (U.App (U.Con "man") (U.Var 0)))
+        (U.Sigma
+            (U.App (U.Con "enter") (U.Proj U.Fst $U.Var 0))
+            (U.App (U.Con "whistle") (U.Proj U.Fst $U.Var 1))
         )
 
-aManWhistle :: DT.Preterm
+aManWhistle :: U.Preterm DTT
 aManWhistle = 
-    DT.Sigma (DT.Con "entity") (DT.App (DT.Con "whistle") (DT.Var 0))
+    U.Sigma (U.Con "entity") (U.App (U.Con "whistle") (U.Var 0))
 
-thereIsAMan :: DT.Preterm
+thereIsAMan :: U.Preterm DTT
 thereIsAMan = thereIsA "man"
 
 aManEntersHeWhistle_IsThereWhistler :: PB.TestType
-aManEntersHeWhistle_IsThereWhistler  b =
+aManEntersHeWhistle_IsThereWhistler =
   let
-    sigEnv = [("whistle",DT.Pi (DT.Con "entity") (DT.Type)),("enter",DT.Pi (DT.Con "entity") (DT.Type)),("man",DT.Pi (DT.Con "entity") (DT.Type)),("entity",DT.Type)]
+    sigEnv = [("whistle",U.Pi (U.Con "entity") (U.Type)),("enter",U.Pi (U.Con "entity") (U.Type)),("man",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [aManEntersHeWhistle]
     pre_type = aManWhistle
-  in (True,executeWithDNEDepth varEnv sigEnv pre_type b 2)
+  in (True,executeWithDNEDepth 2 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 aManEntersHeWhistle_IsThereMan :: PB.TestType
-aManEntersHeWhistle_IsThereMan  b =
+aManEntersHeWhistle_IsThereMan =
   let
-    sigEnv = [("whistle",DT.Pi (DT.Con "entity") (DT.Type)),("enter",DT.Pi (DT.Con "entity") (DT.Type)),("man",DT.Pi (DT.Con "entity") (DT.Type)),("entity",DT.Type)]
+    sigEnv = [("whistle",U.Pi (U.Con "entity") (U.Type)),("enter",U.Pi (U.Con "entity") (U.Type)),("man",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [aManEntersHeWhistle]
     pre_type = thereIsAMan
-  in (True,executeWithDNEDepth varEnv sigEnv pre_type b 3)
+  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})

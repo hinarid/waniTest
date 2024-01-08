@@ -4,8 +4,10 @@ module Problems.DifficultProblems(
   notYes
 )
  where
-import qualified DTS.DTT as DT
+import qualified DTS.UDTTdeBruijn as U
 import ProblemBase as PB
+import qualified DTS.QueryTypes as QT (ProofSearchQuery(..))
+import DTS.Labels (DTT)
 
 yes :: [TestType]
 yes = [
@@ -25,99 +27,100 @@ yes = [
   con4,
   mp,
   s,
-  k]
+  k
+  ]
 
 notYes :: [TestType]
 notYes = []
 
 choiceTest ::TestType
-choiceTest b=
+choiceTest =
   let
-    sigEnv = [("C",DT.Pi (DT.Con "A") (DT.Pi (DT.App (DT.Con "B") (DT.Var 0)) DT.Type)),("B",DT.Pi (DT.Con "A") DT.Type),("A",DT.Type)]
+    sigEnv = [("C",U.Pi (U.Con "A") (U.Pi (U.App (U.Con "B") (U.Var 0)) U.Type)),("B",U.Pi (U.Con "A") U.Type),("A",U.Type)]
     varEnv = []
     pre_type = 
-      DT.Pi 
-        (DT.Pi (DT.Con "A") (DT.Sigma (DT.App (DT.Con "B") (DT.Var 0)) (DT.App (DT.App (DT.Con "C") (DT.Var 1)) (DT.Var 0)))) 
-        (DT.Sigma (DT.Pi (DT.Con "A") (DT.App (DT.Con "B") (DT.Var 0))) (DT.Pi (DT.Con "A") (DT.App (DT.App (DT.Con "C") (DT.Var 0)) (DT.App (DT.Var 1) (DT.Var 0)))))
-  in (True,execute varEnv sigEnv pre_type b)
+      U.Pi 
+        (U.Pi (U.Con "A") (U.Sigma (U.App (U.Con "B") (U.Var 0)) (U.App (U.App (U.Con "C") (U.Var 1)) (U.Var 0)))) 
+        (U.Sigma (U.Pi (U.Con "A") (U.App (U.Con "B") (U.Var 0))) (U.Pi (U.Con "A") (U.App (U.App (U.Con "C") (U.Var 0)) (U.App (U.Var 1) (U.Var 0)))))
+  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 dniTest:: TestType
-dniTest b=
+dniTest =
   let
-    sigEnv = [("a",DT.Type)]
-    varEnv = [DT.Con "a"]
-    pre_type = DT.Not $DT.Not (DT.Con "a")
-  in (True,executeWithDNE varEnv sigEnv pre_type b)
+    sigEnv = [("a",U.Type)]
+    varEnv = [U.Con "a"]
+    pre_type = U.Not $U.Not (U.Con "a")
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 dniTest2 :: TestType
-dniTest2 b =
+dniTest2 =
   let sigEnv = []
-      varEnv = [DT.Type]
-      pre_type =  DT.Pi (DT.Var 0) (DT.Not (DT.Not (DT.Var 1)))
-  in (True,executeWithDNE varEnv sigEnv pre_type b)
+      varEnv = [U.Type]
+      pre_type =  U.Pi (U.Var 0) (U.Not (U.Not (U.Var 1)))
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 transitive :: TestType
-transitive b=
+transitive =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi p q) (DT.Pi (DT.Pi q r) (DT.Pi p r))
-  in (True,executeWithDNE varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi p q) (U.Pi (U.Pi q r) (U.Pi p r))
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 piElimTest6 :: TestType
-piElimTest6 b =
+piElimTest6 =
   let
     sigEnv = sigEs
-    varEnv = [DT.Pi p q,DT.Pi q r]
-    pre_type =  DT.Pi p r
-  in (True,executeWithDNE varEnv sigEnv pre_type b)
+    varEnv = [U.Pi p q,U.Pi q r]
+    pre_type =  U.Pi p r
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 efq :: TestType
 efq =
   let sigEnv = []
-      varEnv = [DT.Type, DT.Bot]
-      pre_type = DT.Var 0
-  in \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+      varEnv = [U.Type, U.Bot]
+      pre_type = U.Var 0
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 lem :: TestType
 lem =
   let
     sigEnv = sigEs
-    varEnv = [DT.Type]
-    pre_type = DT.Not (DT.Sigma (DT.Not $ DT.Var 0) (DT.Not (DT.Not (DT.Var 1))))
-  in \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+    varEnv = [U.Type]
+    pre_type = U.Not (U.Sigma (U.Not $ U.Var 0) (U.Not (U.Not (U.Var 1))))
+  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 tnd :: TestType
 tnd =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi p q) (DT.Pi (DT.Pi (DT.Not p) q) q)
-  in \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi p q) (U.Pi (U.Pi (U.Not p) q) q)
+  in (True,executeWithDNEDepth 9 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 pars :: TestType -- depth 9以上
 pars =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi (DT.Pi p q) p) p
-  in \b -> (True,executeWithDNEDepth varEnv sigEnv pre_type b 10)
+    pre_type = U.Pi (U.Pi (U.Pi p q) p) p
+  in (True,executeWithDNEDepth 10 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 gem :: TestType
 gem =
   let
     sigEnv = sigEs
-    varEnv = [DT.Type,DT.Type]
-    pre_type = DT.Not (DT.Sigma (DT.Not (DT.Pi p q)) (DT.Not p))
-  in \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+    varEnv = [U.Type,U.Type]
+    pre_type = U.Not (U.Sigma (U.Not (U.Pi p q)) (U.Not p))
+  in (True,executeWithDNEDepth 7 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 cm :: TestType
 cm =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type =  DT.Pi (DT.Pi p (DT.Pi p DT.Bot)) (DT.Pi p DT.Bot)
-  in \b ->  (True,execute varEnv sigEnv pre_type b)
+    pre_type =  U.Pi (U.Pi p (U.Pi p U.Bot)) (U.Pi p U.Bot)
+  in  (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 
 con1 :: TestType
@@ -125,53 +128,53 @@ con1 =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi p q) (DT.Pi (DT.Not q) (DT.Not p))
-  in   \b ->  (True,execute varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi p q) (U.Pi (U.Not q) (U.Not p))
+  in    (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 con2 :: TestType
 con2 =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi p (DT.Not q)) (DT.Pi q (DT.Not p))
-  in   \b ->  (True,execute varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi p (U.Not q)) (U.Pi q (U.Not p))
+  in    (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 con3 :: TestType
 con3 =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi (DT.Not q)  p) (DT.Pi (DT.Not p) q)
-  in    \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi (U.Not q)  p) (U.Pi (U.Not p) q)
+  in    (True,executeWithDNEDepth 6 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 con4 :: TestType
 con4 =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi (DT.Not p)  (DT.Not q)) (DT.Pi q p)
-  in   \b -> (True,executeWithDNE varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi (U.Not p)  (U.Not q)) (U.Pi q p)
+  in   (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 mp :: TestType
 mp =
   let
     sigEnv = sigEs
-    varEnv = [DT.Pi p q, p]
+    varEnv = [U.Pi p q, p]
     pre_type = q
-  in   \b ->  (True,execute varEnv sigEnv pre_type b)
+  in    (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 s :: TestType
 s =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type = DT.Pi (DT.Pi p (DT.Pi q r)) (DT.Pi (DT.Pi p q) (DT.Pi p r))
-  in   \b ->  (True,execute varEnv sigEnv pre_type b)
+    pre_type = U.Pi (U.Pi p (U.Pi q r)) (U.Pi (U.Pi p q) (U.Pi p r))
+  in    (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 k :: TestType
 k =
   let
     sigEnv = sigEs
     varEnv = []
-    pre_type =DT.Pi p (DT.Pi q p)
-  in   \b ->  (True,execute varEnv sigEnv pre_type b)
+    pre_type =U.Pi p (U.Pi q p)
+  in    (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})

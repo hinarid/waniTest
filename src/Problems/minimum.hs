@@ -4,30 +4,29 @@ module Problems.Minimum (
   notYes
 )
 where
-import qualified DTS.DTT as DT
+import qualified DTS.UDTTdeBruijn as U
 import qualified ProblemBase as PB
-import qualified DTS.Alligator.AlligatorBase as AB
+import qualified DTS.Prover.Wani.WaniBase as B
+import qualified DTS.QueryTypes as QT (ProofSearchQuery(..))
 
 yes :: [PB.TestType]
-yes = [
-  testYes]
+yes = [testYes]
 
 notYes :: [PB.TestType]
-notYes = [
-  testNo]
+notYes = [testNo]
 
 testYes :: PB.TestType
-testYes b =
+testYes =
   let
-    sigEnv = [("man",DT.Pi (DT.Con "entity") DT.Type),("girl",DT.Pi (DT.Con "entity") DT.Type),("x",DT.Con "entity"),("event",DT.Pi (DT.Con "entity") DT.Type),("entity",DT.Type)]
-    varEnv = [DT.Pi (DT.Con "entity") (DT.Pi (DT.App (DT.Con "girl") (DT.Var 0)) (DT.App (DT.Con "man") (DT.Var 1))),DT.App (DT.Con "girl") (DT.Con "x")]
-    pre_type = DT.App (DT.Con "man") (DT.Con "x")
-  in (True,PB.executeWithDepth  varEnv sigEnv pre_type b 3)
+    sigEnv = [("man",U.Pi (U.Con "entity") U.Type),("girl",U.Pi (U.Con "entity") U.Type),("x",U.Con "entity"),("event",U.Pi (U.Con "entity") U.Type),("entity",U.Type)]
+    varEnv = [U.Pi (U.Con "entity") (U.Pi (U.App (U.Con "girl") (U.Var 0)) (U.App (U.Con "man") (U.Var 1))),U.App (U.Con "girl") (U.Con "x")]
+    pre_type = U.App (U.Con "man") (U.Con "x")
+  in (True,PB.executeWithDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
 
 testNo :: PB.TestType
-testNo b =
+testNo = 
   let
-    sigEnv = [("man",DT.Pi (DT.Con "entity") DT.Type),("girl",DT.Pi (DT.Con "entity") DT.Type),("x",DT.Con "entity"),("event",DT.Pi (DT.Con "entity") DT.Type),("entity",DT.Type)]
-    varEnv = [DT.Pi (DT.Con "entity") (DT.Pi (DT.App (DT.Con "girl") (DT.Var 0)) (DT.App (DT.Con "man") (DT.Var 1))),DT.App (DT.Con "girl") (DT.Con "x")]
-    pre_type = DT.Not $ DT.App (DT.Con "man") (DT.Con "x")
-  in (False,PB.executeWithDepth  varEnv sigEnv pre_type b 3)
+    sigEnv = [("man",U.Pi (U.Con "entity") U.Type),("girl",U.Pi (U.Con "entity") U.Type),("x",U.Con "entity"),("event",U.Pi (U.Con "entity") U.Type),("entity",U.Type)]
+    varEnv = [U.Pi (U.Con "entity") (U.Pi (U.App (U.Con "girl") (U.Var 0)) (U.App (U.Con "man") (U.Var 1))),U.App (U.Con "girl") (U.Con "x")]
+    pre_type = U.Not $ U.App (U.Con "man") (U.Con "x")
+  in (False,PB.executeWithDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})

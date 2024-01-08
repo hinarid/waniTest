@@ -29,96 +29,71 @@ module ProblemBase(
   checkTests
 )
  where
-import DTS.Wani.Prove (prove)
-import qualified DTS.Wani.WaniBase as B
-import qualified DTS.DTT as DT
-import qualified DTS.Prover_daido.Judgement as J
-import qualified DTS.Wani.Arrowterm as A
+import DTS.Prover.Wani.Prove (prove')
 import qualified Data.Time as TIME
+import qualified DTS.QueryTypes as QT
+import qualified DTS.UDTTdeBruijn as U
+import DTS.Labels (DTT)
 
--- | When Q has proofs, you should set `True` as a first output element. if does not, `False`.
-type TestType = 
-  Bool -- ^ to debug or not
-  -> (Bool,B.Result) -- ^ (predicted,result)
+type TestType = (Bool,QT.ProofSearchResult) -- ^ (predicted,result)
 
--- | To test with default setting
-execute ::  J.TEnv -- ^ con list
-  -> A.SUEnv  -- ^ var list
-  -> DT.Preterm -- ^ prop
-  -> Bool -- ^ to debug or not
-  -> B.Result
-execute varEnv sigEnv preType b = prove varEnv sigEnv preType B.settingDef{B.debug=b}
+executeWithDepthMode :: Int
+  -> Maybe QT.LogicSystem
+  -> QT.ProofSearchQuery
+  -> QT.ProofSearchResult
+executeWithDepthMode depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 10000000,QT.system=mode}
 
-executeWithMode :: B.ProofMode
-  -> J.TEnv
-  -> A.SUEnv 
-  -> DT.Preterm 
-  -> Bool
-  -> B.Result
-executeWithMode mode varEnv sigEnv preType b = prove varEnv sigEnv preType B.settingDef{B.debug=b}{B.mode = B.WithDNE}
+executeWithMode :: Maybe QT.LogicSystem
+  -> QT.ProofSearchQuery
+  -> QT.ProofSearchResult
+executeWithMode = executeWithDepthMode 5
 
 -- | To test with DNE
-executeWithDNE ::  J.TEnv
-  -> A.SUEnv 
-  -> DT.Preterm 
-  -> Bool
-  -> B.Result
-executeWithDNE = executeWithMode B.WithDNE
+executeWithDNE ::  QT.ProofSearchQuery -> QT.ProofSearchResult
+executeWithDNE = executeWithDNEDepth 5
+
+-- -- | To test with default setting
+execute :: QT.ProofSearchQuery -> QT.ProofSearchResult
+execute = executeWithDNE
 
 -- | To test with depth tuning
-executeWithDepth :: J.TEnv
-  -> A.SUEnv 
-  -> DT.Preterm 
-  -> Bool
-  -> Int
-  -> B.Result
-executeWithDepth  = executeWithDepthMode B.Plain
+executeWithDepth :: Int
+  -> QT.ProofSearchQuery
+  -> QT.ProofSearchResult
+executeWithDepth depth = executeWithDepthMode depth Nothing
 
--- | To test with DNE and depth tuning
-executeWithDNEDepth :: J.TEnv
-  -> A.SUEnv 
-  -> DT.Preterm 
-  -> Bool
-  -> Int
-  -> B.Result
-executeWithDNEDepth  = executeWithDepthMode B.WithDNE
-
-executeWithDepthMode :: B.ProofMode
-  -> J.TEnv
-  -> A.SUEnv 
-  -> DT.Preterm 
-  -> Bool
-  -> Int
-  -> B.Result
-executeWithDepthMode mode varEnv sigEnv preType b depth = prove varEnv sigEnv preType B.settingDef{B.debug=b,B.maxdepth=depth,B.mode=mode}
+-- -- | To test with DNE and depth tuning
+executeWithDNEDepth :: Int
+  -> QT.ProofSearchQuery
+  -> QT.ProofSearchResult
+executeWithDNEDepth depth = executeWithDepthMode depth (Just QT.Classical)
 
 -- | To test time with depth tuning 
 executeTimeWithDepth :: TestType
-  -> Bool
   -> IO()
-executeTimeWithDepth test b = do
+executeTimeWithDepth test = do
   start <- TIME.getCurrentTime
-  let (_,r) = test b
-  putStrLn (show $ B.trees r)
+  let (_,r) = test
+  putStrLn "a" -- (show r) -- No instance for (Show (U.Judgment DTS.Labels.DTT))
   end <- TIME.getCurrentTime
   putStrLn (show$TIME.diffUTCTime end start)
 
--- | constant term, p
-p :: DT.Preterm
-p = DT.Con "p"
+-- -- | constant term, p
+p :: U.Preterm DTT
+p = U.Con "p"
 
 -- | constant term, q
-q :: DT.Preterm
-q = DT.Con "q"
+q :: U.Preterm DTT
+q = U.Con "q"
 
 -- | constant term, r
-r :: DT.Preterm
-r = DT.Con "r"
+r :: U.Preterm DTT
+r = U.Con "r"
 
 -- | constant List
-sigEs :: A.SUEnv
-sigEs = [("r",DT.Type),("q",DT.Type),("p",DT.Type)]
+sigEs :: U.Signature
+sigEs = [("r",U.Type),("q",U.Type),("p",U.Type)]
 
 -- | Used to perform a batch of tests
 checkTests :: [TestType] -> Bool 
-checkTests ts = and $ map (\f -> let (predicted,result) = f False in predicted == (not $ null $ B.trees result) ) ts
+checkTests ts = and $ map (\f -> let (predicted,result) = f in predicted == (not $ null $ result) ) ts

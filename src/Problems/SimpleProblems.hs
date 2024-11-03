@@ -4,10 +4,8 @@ module Problems.SimpleProblems(
   notYes
 )
 where
-import qualified DTS.UDTTdeBruijn as U
+import qualified DTS.DTTdeBruijn as U
 import ProblemBase as PB
-import qualified DTS.QueryTypes as QT (ProofSearchQuery(..))
-import DTS.Labels (DTT)
 
 yes :: [TestType]
 yes = [
@@ -73,7 +71,7 @@ membershipTest1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Con "entity"]
     pre_type = U.Con "entity"
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTest2 :: TestType
 membershipTest2 =
@@ -81,7 +79,7 @@ membershipTest2 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Con "entity"]
     pre_type = U.Con "entity"
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTestNotFound :: TestType
 membershipTestNotFound =
@@ -89,7 +87,7 @@ membershipTestNotFound =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Type]
     pre_type = U.Con "entity"
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTestNotFound2 :: TestType
 membershipTestNotFound2 =
@@ -97,7 +95,7 @@ membershipTestNotFound2 =
     sigEnv = [("q",U.Type),("p",U.Type),("entity",U.Type)]
     varEnv = [U.Con "p"]
     pre_type = U.App (U.Con "q") (U.Con "p")
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTestNotFound3 :: TestType
 membershipTestNotFound3 =
@@ -105,7 +103,7 @@ membershipTestNotFound3 =
     sigEnv = [("q",U.Type),("p",U.Type),("entity",U.Type)]
     varEnv = [U.Var 0,U.Type,U.Type]
     pre_type = U.Var 2
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTestForward1 :: TestType
 membershipTestForward1 =
@@ -113,7 +111,7 @@ membershipTestForward1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Sigma (U.Type) $U.Sigma U.Type (U.Con "entity")]
     pre_type = U.Con "entity"
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 membershipTestForward2 :: TestType
 membershipTestForward2 =
@@ -121,7 +119,7 @@ membershipTestForward2 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Con "entity") $U.Sigma (U.Con "entity") (U.Type)]
     pre_type = U.Pi (U.Con "entity") U.Type
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqIntroTest1 :: TestType
 eqIntroTest1 =
@@ -129,7 +127,7 @@ eqIntroTest1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Con "entity",U.Pi (U.Con "entity") $U.Sigma (U.Con "entity") (U.Con "entity")]
     pre_type = U.Eq (U.Con "entity") (U.Var 0) (U.Var 0)
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piIntroTest1 :: TestType
 piIntroTest1 =
@@ -137,7 +135,7 @@ piIntroTest1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Con "entity"]
     pre_type = U.Pi (U.Var 0) (U.Var 1)
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piIntroTest2 :: TestType
 piIntroTest2 =
@@ -145,7 +143,7 @@ piIntroTest2 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Con "entity",U.Type,U.Con "entity"]
     pre_type = U.Pi (U.Var 1) (U.Con "entity")
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piIntroTest3 :: TestType
 piIntroTest3 =
@@ -153,7 +151,7 @@ piIntroTest3 =
     sigEnv = [("event",U.Pi (U.Con "entity") U.Type),("entity",U.Type)]
     varEnv = [U.Con "entity",U.Type,U.Pi (U.Con "entity") U.Type]
     pre_type = U.Pi (U.Var 1) (U.Con "entity")
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest1 :: TestType
 piElimTest1 =
@@ -161,7 +159,7 @@ piElimTest1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Var 2) (U.Var 1) ,U.Type,U.Var 0,U.Type]
     pre_type = U.Var 2
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest2 :: TestType
 piElimTest2 =
@@ -169,7 +167,7 @@ piElimTest2 =
     sigEnv = [("r",U.Type),("q",U.Type),("p",U.Type),("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Con "p") (U.Pi (U.Con "q") (U.Con "r")),U.Con "q",U.Con "p"]
     pre_type = U.Con "r"
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest3 :: TestType
 piElimTest3 =
@@ -177,7 +175,7 @@ piElimTest3 =
     sigEnv = [("r",U.Type),("q",U.Type),("p",U.Type),("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Con "p") (U.Pi (U.Con "p")(U.Pi (U.Con "q") (U.Con "r"))),U.Con "p"]
     pre_type = U.Pi (U.Con "q") (U.Con "r")
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest4 :: TestType
 piElimTest4 =
@@ -185,7 +183,7 @@ piElimTest4 =
     sigEnv = [("man",U.Pi (U.Con "entity") U.Type),("girl",U.Pi (U.Con "entity") U.Type),("x",U.Con "entity"),("event",U.Pi (U.Con "entity") U.Type),("entity",U.Type)]
     varEnv = [U.Pi (U.Con "entity") (U.Pi (U.App (U.Con "girl") (U.Var 0)) (U.App (U.Con "man") (U.Var 1))),U.App (U.Con "girl") (U.Con "x")]
     pre_type = U.App (U.Con "man") (U.Con "x")
-  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTestNotFound1 :: TestType
 piElimTestNotFound1 =
@@ -193,7 +191,7 @@ piElimTestNotFound1 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Var 2) (U.Var 1) ,U.Type,U.Var 0,U.Type]
     pre_type = U.Var 0
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTestNotFound2 :: TestType
 piElimTestNotFound2 =
@@ -201,7 +199,7 @@ piElimTestNotFound2 =
     sigEnv = [("entity",U.Type)]
     varEnv = [U.Type,U.Pi (U.Var 0) (U.Var 1) ,U.Type,U.Var 0,U.Type]
     pre_type = U.Var 2
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqIntroTestNotFound :: TestType
 eqIntroTestNotFound =
@@ -209,7 +207,7 @@ eqIntroTestNotFound =
     sigEnv = [("love",U.Pi (U.Con "entity") (U.Pi (U.Con "entity") U.Type)),("man",U.Pi (U.Con "entity") U.Type),("girl",U.Pi (U.Con "entity") U.Type),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = []
     pre_type = U.Eq (U.Type) (U.App (U.App (U.Con "love") (U.Con "y")) (U.Con "x")) (U.App (U.App (U.Con "love") (U.Con "y")) (U.Con "x"))
-  in (False,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest1 :: TestType
 eqElimTest1 =
@@ -217,7 +215,7 @@ eqElimTest1 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Eq (U.Con "entity") (U.Con "x") (U.Con "y"),U.App (U.Con "f") (U.Con "x")]
     pre_type = U.App (U.Con "f") (U.Con "y")
-  in (True,executeWithDNEDepth 6 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest2 :: TestType
 eqElimTest2 =
@@ -225,7 +223,7 @@ eqElimTest2 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.App (U.Con "f") (U.Con "x"),U.Eq (U.Con "entity") (U.Con "x") (U.Var 0),U.Con "entity"]
     pre_type = U.App (U.Con "f") (U.Var 2)
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest3 :: TestType
 eqElimTest3 =
@@ -233,7 +231,7 @@ eqElimTest3 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.App (U.Con "f") (U.Var 2),U.Eq (U.Con "entity") (U.Var 0) (U.Var 1),U.Con "entity",U.Con "entity"]
     pre_type = U.App (U.Con "f") (U.Var 2)
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest4 :: TestType
 eqElimTest4 =
@@ -241,7 +239,7 @@ eqElimTest4 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Eq (U.Con "entity") (U.Con "x") (U.Var 0),U.Con "entity",U.App (U.Con "f") (U.Con "x")]
     pre_type = U.App (U.Con "f") (U.Var 1)
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest5 :: TestType
 eqElimTest5 =
@@ -249,7 +247,7 @@ eqElimTest5 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Eq (U.Con "entity") (U.Var 0) (U.Con "x") ,U.Con "entity",U.App (U.Con "f") (U.Con "x")]
     pre_type = U.App (U.Con "f") (U.Var 1)
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 xy = U.Eq (U.Con "entity") (U.Con"x") (U.Con "y")
 yx = U.Eq (U.Con "entity") (U.Con"y") (U.Con "x")
@@ -264,7 +262,7 @@ transTest1 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [xy,yz]
     pre_type = xz
-  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest2 :: TestType
 transTest2 =
@@ -272,7 +270,7 @@ transTest2 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [xy,yz]
     pre_type = zx
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest3 :: TestType
 transTest3 =
@@ -280,7 +278,7 @@ transTest3 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [xy,zy]
     pre_type = xz
-  in (True,executeWithDNEDepth 2 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 2 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest4 :: TestType
 transTest4 =
@@ -288,7 +286,7 @@ transTest4 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [xy,zy]
     pre_type = zx
-  in (True,executeWithDNEDepth 2 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 2 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest5 :: TestType
 transTest5 =
@@ -296,7 +294,7 @@ transTest5 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [yx,yz]
     pre_type = xz
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest6 :: TestType
 transTest6 =
@@ -304,7 +302,7 @@ transTest6 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [yx,yz]
     pre_type = zx
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest7 :: TestType
 transTest7 =
@@ -312,7 +310,7 @@ transTest7 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [yx,zy]
     pre_type = xz
-  in (True,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 transTest8 :: TestType
 transTest8 =
@@ -320,7 +318,7 @@ transTest8 =
     sigEnv = [("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [yx,zy]
     pre_type = zx
-  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestApp :: TestType
 eqElimTestApp =
@@ -328,7 +326,7 @@ eqElimTestApp =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.App (U.Con "f") (U.Con "y"),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.App (U.Con "f") (U.Con "x")
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestApp2 :: TestType
 eqElimTestApp2 =
@@ -336,7 +334,7 @@ eqElimTestApp2 =
     sigEnv = [("sister",U.Pi (U.Con "entity") (U.Con "entity")),("family",U.Pi (U.Con "entity") (U.Con "entity")),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.App (U.Con "sister") (U.Con "x"),U.Eq (U.Pi (U.Con "entity") (U.Con "entity")) (U.Con "family") (U.Con "sister")]
     pre_type = U.App (U.Con "family") (U.Con "x")
-  in (True,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestSigma1 :: TestType
 eqElimTestSigma1 =
@@ -344,7 +342,7 @@ eqElimTestSigma1 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Sigma (U.App (U.Con "f") (U.Con "x")) (U.App (U.Con "f") (U.Con "x")),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.Sigma (U.App (U.Con "f") (U.Con "x")) (U.App (U.Con "f") (U.Con "y"))
-  in (True,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestPi1 :: TestType
 eqElimTestPi1 =
@@ -352,7 +350,7 @@ eqElimTestPi1 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Pi (U.App (U.Con "f") (U.Con "x")) (U.App (U.Con "f") (U.Con "x")),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.Pi (U.App (U.Con "f") (U.Con "x")) (U.App (U.Con "f") (U.Con "y"))
-  in (True,executeWithDNEDepth 6 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestPiNotFound :: TestType
 eqElimTestPiNotFound =
@@ -360,7 +358,7 @@ eqElimTestPiNotFound =
     sigEnv = [("z",U.Type),("y",U.Type),("x",U.Type),("entity",U.Type)]
     varEnv = [U.Pi (U.Con "z") (U.Con "x"),U.Eq (U.Type) (U.Con "x") (U.Con "y")]
     pre_type = U.Pi (U.Con "z") (U.Con "y")
-  in (False,executeWithDNEDepth 7 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 7 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestPi2 :: TestType
 eqElimTestPi2 =
@@ -368,7 +366,7 @@ eqElimTestPi2 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Pi (U.App (U.Con "f") (U.Con "z")) (U.App (U.Con "f") (U.Con "x")),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.Pi (U.App (U.Con "f") (U.Con "z")) (U.App (U.Con "f") (U.Con "y"))
-  in (True,executeWithDNEDepth 5 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestPi3 :: TestType
 eqElimTestPi3 =
@@ -376,7 +374,7 @@ eqElimTestPi3 =
     sigEnv = [("x",U.Type),("entity",U.Type)]
     varEnv = []
     pre_type = U.Pi (U.Con "x") (U.Con "x")
-  in (True,executeWithDNEDepth 7 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 7 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestSigmaNotFound :: TestType
 eqElimTestSigmaNotFound =
@@ -384,7 +382,7 @@ eqElimTestSigmaNotFound =
     sigEnv = [("z",U.Type),("y",U.Type),("x",U.Type),("entity",U.Type)]
     varEnv = [U.Sigma (U.Con "x") (U.Pi (U.Con "z") (U.Con "x")),U.Eq (U.Type) (U.Con "x") (U.Con "y")]
     pre_type = U.Sigma (U.Con "x") (U.Pi (U.Con "z") (U.Con "y"))
-  in (False,executeWithDNEDepth 7 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 7 (U.ProofSearchQuery sigEnv varEnv pre_type))
  
 eqElimTestSigma2 :: TestType
 eqElimTestSigma2 =
@@ -392,7 +390,7 @@ eqElimTestSigma2 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("z",U.Con "entity"),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Sigma (U.App (U.Con "f") (U.Con "x")) (U.Pi (U.App (U.Con "f") (U.Con "z")) (U.App (U.Con "f") (U.Con "x"))),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.Sigma (U.App (U.Con "f") (U.Con "x")) (U.Pi (U.App (U.Con "f") (U.Con "z")) (U.App (U.Con "f") (U.Con "y")))
-  in (True,executeWithDNEDepth 6 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTestNotFound1 :: TestType
 eqElimTestNotFound1 =
@@ -400,7 +398,7 @@ eqElimTestNotFound1 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Eq (U.Con "entity") (U.Con "x") (U.Var 0),U.Con "entity", U.App (U.Con "f") (U.Con "x")]
     pre_type = U.App (U.Con "f") (U.Con "y")
-  in (False,executeWithDNEDepth 4 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (False,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 dneTest1 :: TestType
 dneTest1 =
@@ -408,7 +406,7 @@ dneTest1 =
     sigEnv = []
     varEnv = [U.Not $ U.Not (U.Var 0),U.Type]
     pre_type = U.Var 1
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 dneTest2 :: TestType
 dneTest2 =
@@ -416,7 +414,7 @@ dneTest2 =
     sigEnv = [("man",U.Pi (U.Con "entity") (U.Type)),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Not $ U.Not (U.App (U.Con "man") (U.Con "y"))]
     pre_type = U.App (U.Con "man") (U.Con "y")
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 dneTest3 :: TestType
 dneTest3 =
@@ -424,7 +422,7 @@ dneTest3 =
     sigEnv = [("man",U.Pi (U.Con "entity") (U.Type)),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Not $ U.Not (U.App (U.Con "man") (U.Con "x")),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.App (U.Con "man") (U.Con "x")
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 dneTest4 :: TestType
 dneTest4 =
@@ -432,7 +430,7 @@ dneTest4 =
     sigEnv = [("man",U.Pi (U.Con "entity") (U.Type)),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.Not $ U.Not (U.App (U.Con "man") (U.Con "x")),U.Eq (U.Con "entity") (U.Con "x") (U.Con "y")]
     pre_type = U.App (U.Con "man") (U.Con "y")
-  in (True,executeWithDNEDepth 6 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 sigmaIntroTest1 :: TestType
 sigmaIntroTest1 =
@@ -440,7 +438,7 @@ sigmaIntroTest1 =
     sigEnv = [("man",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [U.App (U.Con "man") (U.Var 0),U.Con "entity"]
     pre_type = U.Sigma (U.Con "entity") (U.Con "entity")
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 sigmaIntroTest2 :: TestType
 sigmaIntroTest2 =
@@ -448,7 +446,7 @@ sigmaIntroTest2 =
     sigEnv = [("dog",U.Pi (U.Con "entity") (U.Type)),("love",U.Pi (U.Con "entity") (U.Pi (U.Con "entity") U.Type)),("man",U.Pi (U.Con "entity") (U.Type)),("entity",U.Type)]
     varEnv = [U.App (U.App (U.Con "love") (U.Var 3)) (U.Var 1),U.App (U.Con "dog") (U.Var 0),U.Con "entity",U.App (U.Con "man") (U.Var 0),U.Con "entity"]
     pre_type = U.Sigma (U.Con "entity") (U.Sigma (U.Con "entity") (U.Sigma (U.App (U.Con "man") (U.Var 1)) (U.Sigma (U.App (U.App (U.Con "love") (U.Var 2)) (U.Var 1)) (U.App (U.Con "dog") (U.Var 6)))))
-  in (True,executeWithDNEDepth 3 QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNEDepth 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 false :: TestType
 false =
@@ -456,7 +454,7 @@ false =
     sigEnv = []
     varEnv = [U.Type]
     pre_type =  U.Bot
-  in  (False,execute QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in  (False,execute (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest5 :: TestType
 piElimTest5 =
@@ -464,7 +462,7 @@ piElimTest5 =
     sigEnv = sigEs
     varEnv = [p,U.Pi p q,U.Pi q r]
     pre_type =  r
-  in(True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in(True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 piElimTest6 :: TestType
 piElimTest6 =
@@ -472,7 +470,7 @@ piElimTest6 =
     sigEnv = sigEs
     varEnv = [U.Pi (U.Var 2) (U.Var 2),U.Pi (U.Var 2) (U.Var 2),U.Type,U.Type,U.Type]
     pre_type =  U.Pi (U.Var 4) (U.Var 3)
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 dneTest5 :: TestType
 dneTest5 =
@@ -480,4 +478,4 @@ dneTest5 =
     sigEnv = sigEs
     varEnv = [p,U.Pi q r,U.Pi p (U.Pi (U.Pi q U.Bot) U.Bot)]
     pre_type = r
-  in (True,executeWithDNE QT.ProofSearchQuery{QT.sig=sigEnv,QT.ctx=varEnv,QT.typ=pre_type})
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))

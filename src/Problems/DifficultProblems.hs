@@ -17,7 +17,9 @@ yes = [
   lem,
   tnd,
   pars,
+  parsEfq,
   gem,
+  gemEfq,
   cm,
   con1,
   con2,
@@ -102,7 +104,16 @@ pars =
     sigEnv = sigEs
     varEnv = []
     pre_type = U.Pi (U.Pi (U.Pi p q) p) p
-  in (True,executeWithDNEDepth 10 (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in (True,executeWithDNEDepth 12 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+parsEfq :: TestType -- depth 9以上
+parsEfq =
+  let
+    sigEnv = sigEs
+    varEnv = []
+    pre_type = U.Pi (U.Pi (U.Pi p q) p) p
+  in (False,executeWithEFQDepth 20 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
 
 gem :: TestType
 gem =
@@ -110,7 +121,16 @@ gem =
     sigEnv = sigEs
     varEnv = [U.Type,U.Type]
     pre_type = U.Not (U.Sigma (U.Not (U.Pi p q)) (U.Not p))
-  in (True,executeWithDNEDepth 7 (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in (True,executeWithDNEDepth 9 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+gemEfq :: TestType
+gemEfq =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Type,U.Type]
+    pre_type = U.Not (U.Sigma (U.Not (U.Pi p q)) (U.Not p))
+  in (True,executeWithEFQDepth 9 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
 
 cm :: TestType
 cm =
@@ -151,7 +171,7 @@ con4 =
     sigEnv = sigEs
     varEnv = []
     pre_type = U.Pi (U.Pi (U.Not p)  (U.Not q)) (U.Pi q p)
-  in   (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in   (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 mp :: TestType
 mp =

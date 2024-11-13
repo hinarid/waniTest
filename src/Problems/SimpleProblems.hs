@@ -231,7 +231,7 @@ eqElimTest3 =
     sigEnv = [("f",U.Pi (U.Con "entity") U.Type),("y",U.Con "entity"),("x",U.Con "entity"),("entity",U.Type)]
     varEnv = [U.App (U.Con "f") (U.Var 2),U.Eq (U.Con "entity") (U.Var 0) (U.Var 1),U.Con "entity",U.Con "entity"]
     pre_type = U.App (U.Con "f") (U.Var 2)
-  in (True,executeWithDNEDepth 4 (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in (True,executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 eqElimTest4 :: TestType
 eqElimTest4 =

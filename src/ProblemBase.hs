@@ -24,6 +24,7 @@ module ProblemBase(
   executeWithDNE,
   executeWithDepth,
   executeWithDNEDepth,
+  executeWithEFQDepth,
   executeTimeWithDepth,
   -- * Test
   checkTests
@@ -70,6 +71,12 @@ executeWithDNEDepth :: Int
   -> U.ProofSearchQuery
   -> ProofSearchResult
 executeWithDNEDepth depth = executeWithDepthMode depth (Just QT.Classical)
+
+-- -- | To test with EFQ and depth tuning
+executeWithEFQDepth :: Int
+  -> U.ProofSearchQuery
+  -> ProofSearchResult
+executeWithEFQDepth depth = executeWithDepthMode depth (Just QT.Intuitionistic)
 
 -- | To test time with depth tuning 
 executeTimeWithDepth :: TestType

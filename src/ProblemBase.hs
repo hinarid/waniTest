@@ -54,7 +54,7 @@ executeWithMode = executeWithDepthMode 5
 
 -- | To test with DNE
 executeWithDNE ::  U.ProofSearchQuery -> ProofSearchResult
-executeWithDNE = executeWithDNEDepth 5
+executeWithDNE = executeWithDNEDepth 9
 
 -- -- | To test with default setting
 execute :: U.ProofSearchQuery -> ProofSearchResult

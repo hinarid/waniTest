@@ -49,7 +49,8 @@ yes = [
   sigmaIntroTest2,
   piElimTest5,
   piElimTest6,
-  dneTest5]
+  dneTest5
+  ]
 
 notYes :: [TestType]
 notYes = [

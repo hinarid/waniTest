@@ -12,11 +12,8 @@ extra-deps:
 # parserModule
   - git: https://github.com/morning85/parserModules.git
     commit: 899aae39b8c57866148fb3b19a4ac2f393ffaabd
-  # - git: http://github.com/DaisukeBekki/lightblue
-  #   commit: c6712cf93b9df1f386f5a842897f71c90cf58a1e
-  # - /Users/daidohinari/blab/mycode/lightblueNewer/lightblue
-  # - /Users/daidohinari/blab/mycode/issue88/lightblue
-  - /Users/daidohinari/blab/mycode/issue66/lightblue
+  - git: http://github.com/DaisukeBekki/lightblue
+    commit: c6712cf93b9df1f386f5a842897f71c90cf58a1e
 
 build:
   haddock: false

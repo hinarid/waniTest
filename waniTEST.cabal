@@ -1,11 +1,11 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 
 name:           waniTEST
-version:        1.0.0.1
+version:        1.0.0.2
 description:    Please see the README on GitHub at <https://github.com/hinarid/waniTest>
 author:         Hinari Daido
 maintainer:     Hinari Daido
@@ -23,6 +23,7 @@ source-repository head
 library
   exposed-modules:
       ProblemBase
+      Problems.PlayGround
       Problems.SimpleProblems
       Problems.DifficultProblems
       Problems.NLPProblems
@@ -42,6 +43,7 @@ library
     , lightblue >=0.3
     , list-t >=1.0.0.0
     , mtl >=2.2.2
+    , parserModules
     , split
     , text >=1.2
     , time >=1.9.3
@@ -64,6 +66,7 @@ executable waniTEST
     , lightblue >=0.3
     , list-t >=1.0.0.0
     , mtl >=2.2.2
+    , parserModules
     , split
     , text >=1.2
     , time >=1.9.3

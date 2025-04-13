@@ -1,5 +1,5 @@
 name:                waniTEST
-version:             1.0.0.1
+version:             1.0.0.2
 git:                 https://github.com/hinarid/waniTest
 license:             BSD3
 author:              Hinari Daido
@@ -25,6 +25,7 @@ dependencies:
   - list-t >= 1.0.0.0
   - lightblue >= 0.3
   - time >= 1.9.3
+  - parserModules
 
 library:
   source-dirs: src
@@ -32,6 +33,7 @@ library:
   - OverloadedStrings
   exposed-modules:
   - ProblemBase
+  - Problems.PlayGround
   - Problems.SimpleProblems
   - Problems.DifficultProblems
   - Problems.NLPProblems

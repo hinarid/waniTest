@@ -3,13 +3,20 @@ resolver: lts-18.28
 flags: {}
 
 extra-deps:
-  - git: http://github.com/DaisukeBekki/JSeM.git
-    commit: b725e62dd66cbbb4fe891ee84108d7a398f5dd71
+  - git: http://github.com/DaisukeBekki/JSeM
+    commit: c2cd39168e267007b4690dbf625329bac57a8185
   - git: git@github.com:DaisukeBekki/hasktorch-tools.git
     commit: 936928cdee27e179a5e3775d146046b107b0eba1
-  - git: https://github.com/DaisukeBekki/lightblue.git
-    commit: b92288d6b19ec1311e17b206e991d78a0ddb0341
-  # - /Users/daidohinari/blab/mycode/lightblue
+  - git: http://github.com/DaisukeBekki/nlp-tools
+    commit: e4bd3783f4e872b8df29538d9219e41f40378363
+# parserModule
+  - git: https://github.com/morning85/parserModules.git
+    commit: 899aae39b8c57866148fb3b19a4ac2f393ffaabd
+  # - git: http://github.com/DaisukeBekki/lightblue
+  #   commit: c6712cf93b9df1f386f5a842897f71c90cf58a1e
+  # - /Users/daidohinari/blab/mycode/lightblueNewer/lightblue
+  # - /Users/daidohinari/blab/mycode/issue88/lightblue
+  - /Users/daidohinari/blab/mycode/issue66/lightblue
 
 build:
   haddock: false

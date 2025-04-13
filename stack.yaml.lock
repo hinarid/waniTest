@@ -5,30 +5,52 @@
 
 packages:
 - completed:
-    commit: b725e62dd66cbbb4fe891ee84108d7a398f5dd71
-    git: http://github.com/DaisukeBekki/JSeM.git
     name: jsem
+    version: '1.1'
+    git: http://github.com/DaisukeBekki/JSeM
     pantry-tree:
-      sha256: 850e765ff576f8ecb4026513ca1f8ea79e88772351b1f56f9ba2545aeb18ac2d
-      size: 5986
-    version: 0.1.5
+      size: 6040
+      sha256: c077c4221363f40ad472210b825128262eadba1f72d48c0f3ff304c463e24520
+    commit: c2cd39168e267007b4690dbf625329bac57a8185
   original:
-    commit: b725e62dd66cbbb4fe891ee84108d7a398f5dd71
-    git: http://github.com/DaisukeBekki/JSeM.git
+    git: http://github.com/DaisukeBekki/JSeM
+    commit: c2cd39168e267007b4690dbf625329bac57a8185
 - completed:
-    commit: 936928cdee27e179a5e3775d146046b107b0eba1
-    git: git@github.com:DaisukeBekki/hasktorch-tools.git
     name: hasktorch-tools
-    pantry-tree:
-      sha256: 1fd35d65a133b370b8f9c59e76c662bc2be7948e9cf9be78bf90a726a43fbe34
-      size: 1879
     version: 0.2.0.0
-  original:
-    commit: 936928cdee27e179a5e3775d146046b107b0eba1
     git: git@github.com:DaisukeBekki/hasktorch-tools.git
+    pantry-tree:
+      size: 1879
+      sha256: 1fd35d65a133b370b8f9c59e76c662bc2be7948e9cf9be78bf90a726a43fbe34
+    commit: 936928cdee27e179a5e3775d146046b107b0eba1
+  original:
+    git: git@github.com:DaisukeBekki/hasktorch-tools.git
+    commit: 936928cdee27e179a5e3775d146046b107b0eba1
+- completed:
+    name: nlp-tools
+    version: 0.2.0
+    git: http://github.com/DaisukeBekki/nlp-tools
+    pantry-tree:
+      size: 1864
+      sha256: c06faa981b034f9cf3e97742d8ea9a2256c797beb65766aec3198e970144e04f
+    commit: e4bd3783f4e872b8df29538d9219e41f40378363
+  original:
+    git: http://github.com/DaisukeBekki/nlp-tools
+    commit: e4bd3783f4e872b8df29538d9219e41f40378363
+- completed:
+    name: parserModules
+    version: 0.1.0.0
+    git: https://github.com/morning85/parserModules.git
+    pantry-tree:
+      size: 1350
+      sha256: 442a3932cae958b87c9bae551cdb53f245623516d74ccf3429d2cc52afada0c8
+    commit: 899aae39b8c57866148fb3b19a4ac2f393ffaabd
+  original:
+    git: https://github.com/morning85/parserModules.git
+    commit: 899aae39b8c57866148fb3b19a4ac2f393ffaabd
 snapshots:
 - completed:
-    sha256: 428ec8d5ce932190d3cbe266b9eb3c175cd81e984babf876b64019e2cbe4ea68
     size: 590100
     url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/28.yaml
+    sha256: 428ec8d5ce932190d3cbe266b9eb3c175cd81e984babf876b64019e2cbe4ea68
   original: lts-18.28

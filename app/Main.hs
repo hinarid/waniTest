@@ -2,6 +2,7 @@ import qualified ProblemBase as PB
 import qualified Problems.SimpleProblems as SP (yes,notYes) 
 import qualified Problems.DifficultProblems as DP (yes,notYes)
 import qualified Problems.NLPProblems as NLPP (yes,notYes)
+import qualified Problems.PlayGround as PG (yes)
 import qualified Data.Time as TIME
 
 main :: IO()

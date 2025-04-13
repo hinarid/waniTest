@@ -49,7 +49,15 @@ yes = [
   sigmaIntroTest2,
   piElimTest5,
   piElimTest6,
-  dneTest5
+  dneTest5,
+  disjointIntroTest1,
+  disjointIntroTest2,
+  disjointTest1,
+  disjointTest2,
+  disjointTest3,
+  disjointTest4,
+  disjointTest5,
+  disjointTest6
   ]
 
 notYes :: [TestType]
@@ -479,4 +487,68 @@ dneTest5 =
     sigEnv = sigEs
     varEnv = [p,U.Pi q r,U.Pi p (U.Pi (U.Pi q U.Bot) U.Bot)]
     pre_type = r
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointIntroTest1 :: TestType
+disjointIntroTest1 =
+  let
+    sigEnv = sigEs
+    varEnv = [p]
+    pre_type = U.Disj p q
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointIntroTest2 :: TestType
+disjointIntroTest2 =
+  let
+    sigEnv = sigEs
+    varEnv = [q]
+    pre_type = U.Disj p q
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest1 :: TestType
+disjointTest1 =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Disj (p) (U.Disj q r)]
+    pre_type = U.Disj (U.Disj p q) (r)
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest2 :: TestType
+disjointTest2 =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Disj (U.Disj p q) r]
+    pre_type = U.Disj p (U.Disj q r)
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest3 :: TestType
+disjointTest3 =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Disj p p]
+    pre_type = p
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest4 :: TestType
+disjointTest4 =
+  let
+    sigEnv = sigEs
+    varEnv = [p]
+    pre_type = U.Disj p p
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest5 :: TestType
+disjointTest5 =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Disj p q]
+    pre_type = U.Disj q p
+  in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest6 :: TestType
+disjointTest6 =
+  let
+    sigEnv = sigEs
+    varEnv = [U.Disj p (U.Disj q r)]
+    pre_type = U.Disj q (U.Disj r p)
   in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))

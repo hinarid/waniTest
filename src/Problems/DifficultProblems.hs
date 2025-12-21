@@ -17,7 +17,6 @@ yes = [
   lem,
   tnd,
   pars,
-  parsEfq,
   gem,
   gemEfq,
   cm,
@@ -31,7 +30,9 @@ yes = [
   ]
 
 notYes :: [TestType]
-notYes = []
+notYes = [
+    parsEfq
+  ]
 
 choiceTest ::TestType
 choiceTest =

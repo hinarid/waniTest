@@ -12,6 +12,9 @@ extra-deps:
 # parserModule
   - git: https://github.com/morning85/parserModules.git
     commit: 899aae39b8c57866148fb3b19a4ac2f393ffaabd
+  - classy-prelude-yesod-1.5.0@sha256:8f7e183bdfd6d2ea9674284c4f285294ab086aff60d9be4e5d7d2f3c1a2b05b7,1330
+  - git: http://github.com/DaisukeBekki/lightblue
+    commit: d199abeda7879b84b219080ed625b07542e060e1
 
 
 build:

@@ -18,7 +18,8 @@ yes = [
   entityCheck,
   q619,
   q623',
-  q624]
+  q624
+  ]
 
 notYes :: [PB.TestType]
 notYes = [

@@ -26,6 +26,7 @@ dependencies:
   - lightblue >= 0.3
   - time >= 1.9.3
   - parserModules
+  - classy-prelude-yesod >=1.5 && <1.6
 
 library:
   source-dirs: src

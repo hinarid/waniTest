@@ -9,10 +9,10 @@ import qualified ProblemBase as PB
 import qualified DTS.Prover.Wani.WaniBase as B
 
 yes :: [PB.TestType]
-yes = [oracleTest1,oracleTest2,q619,q623',q624]
+yes = [oracleTest1,oracleTest2,q619,q623',q624,oracleTest3]
 
 notYes :: [PB.TestType]
-notYes = [testNo,q623]
+notYes = [testNo,testNo2,q623]
 
 oracleTest1 :: PB.TestType
 oracleTest1 =
@@ -29,6 +29,22 @@ oracleTest2 =
     varEnv = [U.Pi (U.Entity) (U.Pi (U.App (U.Con "noodle") (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1))),U.App (U.Con "udon") (U.Con "kareeudon")]
     pre_type = U.App (U.Con "yummy") (U.Con "kareeudon")
   in (True,PB.executeWithOracle 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+oracleTest3 :: PB.TestType
+oracleTest3 =
+  let
+    sigEnv = [("ringo",U.Pi U.Type (U.Pi U.Entity U.Type)),("fruit",U.Pi U.Type (U.Pi U.Entity U.Type)),("yummy",U.Pi U.Entity (U.Type))]
+    varEnv = [U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "fruit") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))]
+    pre_type = U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "ringo") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))
+  in (True,PB.executeWithOracle 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+testNo2 :: PB.TestType
+testNo2 =
+  let
+    sigEnv = [("ringo",U.Pi U.Type (U.Pi U.Entity U.Type)),("fruit",U.Pi U.Type (U.Pi U.Entity U.Type)),("yummy",U.Pi U.Entity (U.Type))]
+    varEnv = [U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "ringo") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))]
+    pre_type = U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "fruit") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))
+  in (False,PB.executeWithOracle 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 testNo :: PB.TestType
 testNo = 

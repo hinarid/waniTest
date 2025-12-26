@@ -39,9 +39,20 @@ import ListT (ListT,null)               --list-t
 import qualified Interface.Tree as I
 import qualified DTS.QueryTypes as QT
 import qualified DTS.DTTdeBruijn as U
+import qualified Data.Maybe as M
 
 type ProofSearchResult = ListT IO (I.Tree QT.DTTrule (U.Judgment))
 type TestType = (Bool,ProofSearchResult) -- ^ (predicted,result)
+
+oracleForTest :: U.ConName -> U.ConName -> Float
+oracleForTest small big =
+  case (small,big) of
+    ("udon","noodle") -> 0.51
+    ("customer","human") -> 0.51
+    ("prof","female") -> 0.51
+    ("aProf","female") -> 0.51
+    ("ringo","fruit") -> 0.51
+    _ -> 0.1
 
 executeWithDepthMode :: Int
   -> Maybe QT.LogicSystem
@@ -54,7 +65,7 @@ executeWithDepthModeOracle :: Bool
   -> Maybe QT.LogicSystem
   -> U.ProofSearchQuery
   -> ProofSearchResult
-executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 300000,QT.logicSystem=mode,QT.neuralDTS = enableOracle}
+executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 60000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest}
 
 executeWithOracle :: Int
   -> U.ProofSearchQuery

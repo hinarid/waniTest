@@ -29,7 +29,8 @@ module ProblemBase(
   executeWithOracle,
   executeWithEFQOracle,
   -- * Test
-  checkTests
+  checkTests,
+  checkTestsIO
 )
  where
 import DTS.Prover.Wani.Prove (prove')
@@ -52,6 +53,9 @@ oracleForTest small big =
     ("prof","female") -> 0.51
     ("aProf","female") -> 0.51
     ("ringo","fruit") -> 0.51
+    ("broccoli","vegetable") -> 0.51
+    ("りんご","果物") -> 0.51
+    ("ブロッコリー","野菜") -> 0.51
     _ -> 0.1
 
 executeWithDepthMode :: Int
@@ -65,7 +69,7 @@ executeWithDepthModeOracle :: Bool
   -> Maybe QT.LogicSystem
   -> U.ProofSearchQuery
   -> ProofSearchResult
-executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 60000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest}
+executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 600000000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest}
 
 executeWithOracle :: Int
   -> U.ProofSearchQuery
@@ -142,3 +146,8 @@ checkTests ts = do
     isNull <- ListT.null result
     return $ predicted == not isNull
   return $ and results
+
+checkTestsIO :: [IO TestType] -> IO Bool
+checkTestsIO tsIO = do
+  ts <- sequence tsIO
+  checkTests ts

@@ -9,7 +9,7 @@ import qualified ProblemBase as PB
 import qualified DTS.Prover.Wani.WaniBase as B
 
 yes :: [PB.TestType]
-yes = [oracleTest1,oracleTest2,q619,q623',q624,oracleTest3,oracleTest4]
+yes = [oracleTest1,oracleTest2,q619,q623',q624,oracleTest3,oracleTest4,oracleTest5]
 
 notYes :: [PB.TestType]
 notYes = [testNo,testNo2,q623]
@@ -36,7 +36,7 @@ oracleTest3 =
     sigEnv = [("ringo",U.Pi U.Type (U.Pi U.Entity U.Type)),("fruit",U.Pi U.Type (U.Pi U.Entity U.Type)),("yummy",U.Pi U.Entity (U.Type))]
     varEnv = [U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "fruit") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))]
     pre_type = U.Pi (U.Entity) (U.Pi (U.App (U.App (U.Con "ringo") (U.Entity)) (U.Var 0)) (U.App (U.Con "yummy") (U.Var 1)))
-  in (True,PB.executeWithOracle 3 (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in (True,PB.executeWithOracle 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 oracleTest4 :: PB.TestType
 oracleTest4 =
@@ -51,7 +51,20 @@ oracleTest4 =
               ]
     varEnv = [U.Sigma (U.Sigma (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.Con "ringo") (U.Var 1)) (U.Var 0)) (U.Top)))) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.App (U.Con "eat") (U.Proj U.Fst (U.Var 1))) (U.Con "taro")) (U.Var 0)) (U.Top))))  (U.Sigma (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.Con "broccoli") (U.Var 1)) (U.Var 0)) (U.Top)))) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.App (U.Con "eat") (U.Proj U.Fst (U.Var 1))) (U.Con "taro")) (U.Var 0)) (U.Top)))) ]
     pre_type = U.Sigma (U.Sigma (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.Con "fruit") (U.Var 1)) (U.Var 0)) (U.Top)))) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.App (U.Con "eat") (U.Proj U.Fst (U.Var 1))) (U.Con "taro")) (U.Var 0)) (U.Top))))  (U.Sigma (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.Con "vegetable") (U.Var 1)) (U.Var 0)) (U.Top)))) (U.Sigma (U.Entity) (U.Sigma (U.App (U.App (U.App (U.Con "eat") (U.Proj U.Fst (U.Var 1))) (U.Con "taro")) (U.Var 0)) (U.Top)))) 
-  in (True,PB.executeWithOracle 5 (U.ProofSearchQuery sigEnv varEnv pre_type))
+  in (True,PB.executeWithOracle 7 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+oracleTest5 :: PB.TestType
+oracleTest5 =
+  let
+    sigEnv = [
+                ("alien",U.Pi (U.Entity) (U.Pi U.Entity U.Type)),
+                ("cola",U.Pi (U.Entity) (U.Pi U.Entity U.Type)),
+                ("juice",U.Pi (U.Entity) (U.Pi U.Entity U.Type)),
+                ("nomu",U.Pi U.Entity (U.Pi (U.Entity) (U.Pi U.Entity U.Type)))
+              ]
+    varEnv = [(U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.App (U.App (U.Con "alien") (U.Var 0)) (U.Var 1)))),U.Pi (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.App (U.App (U.Con "alien") (U.Var 0)) (U.Var 1)))) (U.Sigma (U.Sigma (U.Entity) (U.Sigma (U.Entity) (U.App (U.App (U.Con "cola") (U.Var 0)) (U.Var 1)))) (U.Sigma (U.Entity) (U.App (U.App (U.App (U.Con "nomu") (U.Var 0)) (U.Proj U.Fst (U.Var 2))) (U.Proj U.Fst (U.Var 1)))))]
+    pre_type = U.Sigma (U.Sigma (U.Entity) (U.Sigma U.Entity (U.App (U.App (U.Con "juice") (U.Var 0)) (U.Var 1) ))) (U.Sigma U.Entity (U.App (U.App (U.App (U.Con "nomu") (U.Var 0)) (U.Proj U.Fst (U.Var 2))) (U.Proj U.Fst (U.Var 1))))
+  in (True,PB.executeWithDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
 
 testNo2 :: PB.TestType
 testNo2 =

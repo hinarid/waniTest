@@ -56,6 +56,7 @@ oracleForTest small big =
     ("broccoli","vegetable") -> 0.51
     ("りんご","果物") -> 0.51
     ("ブロッコリー","野菜") -> 0.51
+    ("cola","juice") -> 0.51
     _ -> 0.1
 
 executeWithDepthMode :: Int

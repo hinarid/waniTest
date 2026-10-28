@@ -59,7 +59,11 @@ yes = [
   disjointTest3,
   disjointTest4,
   disjointTest5,
-  disjointTest6
+  disjointTest6,
+  disjointTest7,
+  disjointTest8,
+  disjointTest9,
+  disjointTest10
   ]
 
 notYes :: [TestType]
@@ -574,3 +578,33 @@ disjointTest6 =
     varEnv = [U.Disj p (U.Disj q r)]
     pre_type = U.Disj q (U.Disj r p)
   in (True,executeWithDNE (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest7 :: TestType
+disjointTest7 =
+  let
+    sigEnv = [("yum",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("red",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("m",U.Disj (U.Con "apple") (U.Con "tomato")),("apple",U.Type),("tomato",U.Type)]
+    varEnv = [U.Pi (U.Con "apple") (U.App (U.Con "yum") (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Con "yum") (U.Iota U.Snd (U.Var 0))),U.App (U.Con "yum") (U.Con "m"), U.Pi (U.Con "apple") (U.App (U.Con "red") (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Con "red") (U.Iota U.Snd (U.Var 0)))]
+    pre_type = U.Sigma (U.App (U.Con "red") (U.Con "m")) (U.App (U.Con "yum") (U.Con "m"))
+  in (True,PB.executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest8 :: TestType
+disjointTest8 =
+  let
+    sigEnv = [("yum",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("red",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("m",U.Disj (U.Con "apple") (U.Con "tomato")),("apple",U.Type),("tomato",U.Type)]
+    varEnv = [U.App (U.Con "yum") (U.Con "m"), U.Pi (U.Con "apple") (U.App (U.Con "red") (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Con "red") (U.Iota U.Snd (U.Var 0)))]
+    pre_type = U.Sigma (U.App (U.Con "red") (U.Con "m")) (U.App (U.Con "yum") (U.Con "m"))
+  in (True,PB.executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest9 :: TestType
+disjointTest9 =  let
+    sigEnv = [("yum",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("red",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("m",U.Disj (U.Con "apple") (U.Con "tomato")),("apple",U.Type),("tomato",U.Type)]
+    varEnv = [U.Pi (U.Con "apple") (U.App (U.Con "red") (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Con "red") (U.Iota U.Snd (U.Var 0)))]
+    pre_type = U.Sigma (U.App (U.Con "red") (U.Con "m")) (U.App (U.Con "yum") (U.Con "m"))
+  in (False,PB.executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+disjointTest10 :: TestType
+disjointTest10 =  let
+    sigEnv = [("yum",U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type),("m",U.Disj (U.Con "apple") (U.Con "tomato")),("apple",U.Type),("tomato",U.Type)]
+    varEnv = [U.App (U.Con "yum") (U.Con "m"), U.Pi (U.Con "apple") (U.App (U.Var 2) (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Var 1) (U.Iota U.Snd (U.Var 0))),U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type]
+    pre_type = U.Sigma (U.App (U.Con "yum") (U.Con "m")) (U.App (U.Var 4) (U.Con "m"))
+  in (True,PB.executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))

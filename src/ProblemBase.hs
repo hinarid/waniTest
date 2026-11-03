@@ -70,7 +70,7 @@ executeWithDepthModeOracle :: Bool
   -> Maybe QT.LogicSystem
   -> U.ProofSearchQuery
   -> ProofSearchResult
-executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 600000000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest}
+executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 600000000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest,QT.enableEquality=True}
 
 executeWithOracle :: Int
   -> U.ProofSearchQuery

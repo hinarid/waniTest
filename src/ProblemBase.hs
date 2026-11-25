@@ -28,15 +28,17 @@ module ProblemBase(
   executeTimeWithDepth,
   executeWithOracle,
   executeWithEFQOracle,
+  executeWithTerm,
   -- * Test
   checkTests,
   checkTestsIO
 )
  where
-import DTS.Prover.Wani.Prove (prove')
+import DTS.Prover.Wani.Prove (prove',proveWithTerm)
 import Control.Monad (forM)
+import Control.Monad.Trans (lift)
 import qualified Data.Time as TIME
-import ListT (ListT,null)               --list-t
+import ListT (ListT,null,fromFoldable)               --list-t
 import qualified Interface.Tree as I
 import qualified DTS.QueryTypes as QT
 import qualified DTS.DTTdeBruijn as U
@@ -70,7 +72,7 @@ executeWithDepthModeOracle :: Bool
   -> Maybe QT.LogicSystem
   -> U.ProofSearchQuery
   -> ProofSearchResult
-executeWithDepthModeOracle enableOracle depth mode = prove' QT.ProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 600000000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest,QT.enableEquality=True}
+executeWithDepthModeOracle enableOracle depth mode = prove' QT.defaultProofSearchSetting{QT.maxDepth=Just depth,QT.maxTime=Just 600000000,QT.logicSystem=mode,QT.oracle = M.Just oracleForTest,QT.enableEquality=True}
 
 executeWithOracle :: Int
   -> U.ProofSearchQuery
@@ -113,6 +115,14 @@ executeWithEFQDepth :: Int
   -> U.ProofSearchQuery
   -> ProofSearchResult
 executeWithEFQDepth depth = executeWithDepthMode depth (Just QT.Intuitionistic)
+
+-- | To test the search guided by a proof term
+executeWithTerm :: Int
+  -> U.ProofSearchQuery
+  -> U.Preterm
+  -> ProofSearchResult
+executeWithTerm depth query term =
+  lift (proveWithTerm QT.defaultProofSearchSetting{QT.maxDepth=Just depth} query term) >>= fromFoldable
 
 -- | To test time with depth tuning 
 executeTimeWithDepth :: TestType

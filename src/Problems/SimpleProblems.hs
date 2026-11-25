@@ -63,7 +63,13 @@ yes = [
   disjointTest7,
   disjointTest8,
   disjointTest9,
-  disjointTest10
+  disjointTest10,
+  disjointVarResultTest,
+  disjointVarDisjTest,
+  disjointVarResultClassicalTest,
+  sigmaProjArgTest,
+  sigmaProjTermTest,
+  sigmaCaseTailTermTest
   ]
 
 notYes :: [TestType]
@@ -608,3 +614,60 @@ disjointTest10 =  let
     varEnv = [U.App (U.Con "yum") (U.Con "m"), U.Pi (U.Con "apple") (U.App (U.Var 2) (U.Iota U.Fst (U.Var 0))),U.Pi (U.Con "tomato") (U.App (U.Var 1) (U.Iota U.Snd (U.Var 0))),U.Pi (U.Disj (U.Con "apple") (U.Con "tomato")) U.Type]
     pre_type = U.Sigma (U.App (U.Con "yum") (U.Con "m")) (U.App (U.Var 4) (U.Con "m"))
   in (True,PB.executeWithDNEDepth 6 (U.ProofSearchQuery sigEnv varEnv pre_type))
+
+sigPQ :: U.Signature
+sigPQ = [("Q",U.Pi (U.Con "entity") U.Type),("P",U.Pi (U.Con "entity") U.Type),("p",U.Type),("entity",U.Type)]
+
+predP :: Int -> U.Preterm
+predP i = U.App (U.Con "P") (U.Var i)
+
+predQ :: Int -> U.Preterm
+predQ i = U.App (U.Con "Q") (U.Var i)
+
+-- | forall x. (P x \/ Q x) -> (Q x \/ P x)
+disjVarResult :: U.Preterm
+disjVarResult = U.Pi (U.Con "entity") (U.Pi (U.Disj (predP 0) (predQ 0)) (U.Disj (predQ 1) (predP 1)))
+
+-- Intuitionistic, so that dne cannot turn the result type into the constant bottom.
+disjointVarResultTest :: TestType
+disjointVarResultTest = (True,executeWithEFQDepth 9 (U.ProofSearchQuery sigPQ [] disjVarResult))
+
+-- | forall x. (P x \/ Q x) -> (P x -> p) -> (Q x -> p) -> p
+disjointVarDisjTest :: TestType
+disjointVarDisjTest =
+  let
+    pre_type = U.Pi (U.Con "entity") (U.Pi (U.Disj (predP 0) (predQ 0)) (U.Pi (U.Pi (predP 1) p) (U.Pi (U.Pi (predQ 2) p) p)))
+  in (True,executeWithEFQDepth 9 (U.ProofSearchQuery sigPQ [] pre_type))
+
+disjointVarResultClassicalTest :: TestType
+disjointVarResultClassicalTest = (True,executeWithDNE (U.ProofSearchQuery sigPQ [] disjVarResult))
+
+-- | h : (Sigma y:entity)(Sigma x:entity) P x, f : (Pi u:(Sigma x:entity) P x) Q (fst u) |- Q (fst (snd h))
+-- The search finds f (snd h) only if sigmaIntro takes the projection snd h as a clue.
+sigmaProjArgTest :: TestType
+sigmaProjArgTest =
+  let
+    varEnv = [U.Pi (U.Sigma (U.Con "entity") (predP 0)) (U.App (U.Con "Q") (U.Proj U.Fst (U.Var 0))),U.Sigma (U.Con "entity") (U.Sigma (U.Con "entity") (predP 0))]
+    pre_type = U.App (U.Con "Q") (U.Proj U.Fst (U.Proj U.Snd (U.Var 1)))
+  in (True,executeWithEFQDepth 9 (U.ProofSearchQuery sigPQ varEnv pre_type))
+
+-- | h : (Sigma y:entity)(Sigma x:entity) P x |- snd h : (Sigma x:entity) P x
+sigmaProjTermTest :: TestType
+sigmaProjTermTest =
+  let
+    varEnv = [U.Sigma (U.Con "entity") (U.Sigma (U.Con "entity") (predP 0))]
+    pre_type = U.Sigma (U.Con "entity") (predP 0)
+  in (True,executeWithTerm 9 (U.ProofSearchQuery sigPQ varEnv pre_type) (U.Proj U.Snd (U.Var 0)))
+
+-- | h1 : P a \/ Q a |- (a, unpack(h1, ...)) : (Sigma x:entity)(Sigma y:entity) (Q x \/ P y)
+-- The pair has two members for three in the flattened Sigma, and its tail is a case.
+sigmaCaseTailTermTest :: TestType
+sigmaCaseTailTermTest =
+  let
+    a = U.Con "a"
+    sigEnv = ("a",U.Con "entity") : sigPQ
+    varEnv = [U.Disj (U.App (U.Con "P") a) (U.App (U.Con "Q") a)]
+    pre_type = U.Sigma (U.Con "entity") (U.Sigma (U.Con "entity") (U.Disj (predQ 1) (predP 0)))
+    motive = U.Sigma (U.Con "entity") (U.Disj (U.App (U.Con "Q") a) (predP 0))
+    term = U.Pair a (U.Unpack (U.Var 0) (U.Lam motive) (U.Lam (U.Pair a (U.Iota U.Snd (U.Var 0)))) (U.Lam (U.Pair a (U.Iota U.Fst (U.Var 0)))))
+  in (True,executeWithTerm 9 (U.ProofSearchQuery sigEnv varEnv pre_type) term)
